@@ -26,7 +26,7 @@ export function App() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [selectedDictId, setSelectedDictId] = useState('core')
   const [options, setOptions] = useState<ComposeOptions>({
-    ignoreVariants: true,
+    ignoreVariants: false,
     allowMultiPick: false,
   })
   const [counts, setCounts] = useState<Map<string, number>>(new Map())
@@ -183,7 +183,7 @@ export function App() {
                   setOptions({ ...options, ignoreVariants: e.target.checked })
                 }
               />
-              濁点・半濁点・小さい音を区別しない
+              濁音・半濁音・小さい文字は区別しない
             </label>
             <label>
               <input
@@ -193,7 +193,7 @@ export function App() {
                   setOptions({ ...options, allowMultiPick: e.target.checked })
                 }
               />
-              同じ要素から2文字以上拾うことを許可
+              同じ要素から2文字以上拾うことを許可する
             </label>
           </div>
         </div>
@@ -230,9 +230,7 @@ export function App() {
               </ul>
             </nav>
             <div className="wl-detail">
-              {selectedGroup === null ? (
-                <p className="no-result">左のリストからテーマを選んでください</p>
-              ) : (
+              {selectedGroup !== null && (
                 <GroupDetail group={selectedGroup} words={selectedWords} />
               )}
             </div>

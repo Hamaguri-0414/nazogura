@@ -15,7 +15,7 @@ export function App() {
   const [inputError, setInputError] = useState<string | null>(null)
   const [options, setOptions] = useState<SearchOptions>({
     allowedMisses: 0,
-    ignoreVariants: true,
+    ignoreVariants: false,
     allowMultiPick: false,
   })
 
@@ -69,7 +69,7 @@ export function App() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="例: ひかり"
+              placeholder="例: ねがい"
               aria-label="答えの単語"
             />
             <button type="submit" className="primary" disabled={dict === null}>
@@ -80,7 +80,7 @@ export function App() {
 
           <div className="search-options">
             <label>
-              許容する未マッチ文字数
+              マッチングしなくても良い文字数
               <select
                 value={options.allowedMisses}
                 onChange={(e) =>
@@ -102,7 +102,7 @@ export function App() {
                   setOptions({ ...options, ignoreVariants: e.target.checked })
                 }
               />
-              濁点・半濁点・小さい音を区別しない
+              濁音・半濁音・小さい文字は区別しない
             </label>
             <label>
               <input
@@ -112,7 +112,7 @@ export function App() {
                   setOptions({ ...options, allowMultiPick: e.target.checked })
                 }
               />
-              同じ要素から2文字以上拾うことを許可
+              同じ要素から2文字以上拾うことを許可する
             </label>
           </div>
         </div>
@@ -127,7 +127,7 @@ export function App() {
               <p className="no-result">
                 見つかりませんでした。
                 <br />
-                「許容する未マッチ文字数」を増やすと候補が見つかるかもしれません。
+                「マッチングしなくても良い文字数」を増やすと候補が見つかるかもしれません。
               </p>
             )}
             {results.map((match) => (
