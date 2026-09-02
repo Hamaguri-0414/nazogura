@@ -7,6 +7,7 @@ export function SiteHeader() {
       </a>
       <nav>
         <a href={`${base}tools/theme-reverse-search/`}>テーマ逆引き検索</a>
+        <a href={`${base}tools/theme-word-list/`}>テーマ別単語リスト</a>
       </nav>
     </header>
   )

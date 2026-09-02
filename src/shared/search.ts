@@ -1,5 +1,6 @@
 import type { Group } from './types'
 import { normalizeForSearch, toBase } from './normalize'
+import { maxMatchingSize } from './matching'
 
 export interface SearchOptions {
   /** 拾えない文字を何文字まで許容するか */
@@ -46,27 +47,6 @@ const SEARCH_STEP_LIMIT = 20000
 /** 元の文字位置との対応を保つため1文字ずつ正規化する */
 function normalizeChars(text: string, ignoreVariants: boolean): string[] {
   return [...text].map((ch) => normalizeForSearch(ch, ignoreVariants))
-}
-
-/** 増加路探索による最大マッチングのサイズ */
-function maxMatchingSize(candidates: number[][], elementCount: number): number {
-  const elementOwner = new Array<number>(elementCount).fill(-1)
-  const tryAssign = (i: number, visited: boolean[]): boolean => {
-    for (const j of candidates[i]) {
-      if (visited[j]) continue
-      visited[j] = true
-      if (elementOwner[j] === -1 || tryAssign(elementOwner[j], visited)) {
-        elementOwner[j] = i
-        return true
-      }
-    }
-    return false
-  }
-  let size = 0
-  for (let i = 0; i < candidates.length; i++) {
-    if (tryAssign(i, new Array<boolean>(elementCount).fill(false))) size++
-  }
-  return size
 }
 
 /**

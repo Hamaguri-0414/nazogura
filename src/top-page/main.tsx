@@ -17,6 +17,12 @@ function TopPage() {
             答えにしたい単語から、その単語を1文字ずつ拾って作れる「テーマ」（指の名前、曜日など）を逆引きします。
           </p>
         </a>
+        <a className="card tool-card" href={`${base}tools/theme-word-list/`}>
+          <h2>テーマ別単語リスト</h2>
+          <p className="muted">
+            各テーマの要素から1文字ずつ拾って作れる単語を、豚辞書・一般辞書・コア辞書から探して一覧します。
+          </p>
+        </a>
       </main>
     </>
   )

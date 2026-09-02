@@ -20,6 +20,10 @@ export default defineConfig(({ command, isPreview }) => ({
           import.meta.dirname,
           'tools/theme-reverse-search/index.html',
         ),
+        themeWordList: resolve(
+          import.meta.dirname,
+          'tools/theme-word-list/index.html',
+        ),
       },
     },
   },

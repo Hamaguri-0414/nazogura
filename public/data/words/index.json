@@ -1,0 +1,20 @@
+[
+  {
+    "id": "core",
+    "name": "コア辞書",
+    "file": "core.txt",
+    "count": 18068
+  },
+  {
+    "id": "common",
+    "name": "一般辞書",
+    "file": "common.txt",
+    "count": 48545
+  },
+  {
+    "id": "buta",
+    "name": "豚辞書",
+    "file": "buta.txt",
+    "count": 201092
+  }
+]
