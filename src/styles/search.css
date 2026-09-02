@@ -83,22 +83,24 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
 }
 
 .pick-list li {
   padding: 0.1rem 0;
 }
 
-.pick-list .pick-char {
-  display: inline-block;
-  min-width: 1.5em;
+.pick-list .picked {
+  background: var(--color-highlight);
+  border-radius: 3px;
   font-weight: 700;
-  text-align: center;
+  padding: 0 0.05em;
 }
 
 .pick-list .missed {
   color: var(--color-danger);
+  font-size: 0.9rem;
 }
 
 .loading,

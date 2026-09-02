@@ -39,14 +39,17 @@ export function ResultCard({ match }: { match: ThemeMatch }) {
       <ul className="pick-list">
         {picks.map((pick, i) => (
           <li key={i} className={pick.matched ? undefined : 'missed'}>
-            <span className="pick-char">{pick.char}</span>
             {pick.matched ? (
-              <>
-                ← {group.elements[pick.elementIndex!]} の {pick.charIndexInElement! + 1}
-                文字目
-              </>
+              [...group.elements[pick.elementIndex!]].map((ch, k) => (
+                <span
+                  key={k}
+                  className={k === pick.charIndexInElement ? 'picked' : undefined}
+                >
+                  {ch}
+                </span>
+              ))
             ) : (
-              <>← 見つかりません</>
+              <>「{pick.char}」は拾えません</>
             )}
           </li>
         ))}
