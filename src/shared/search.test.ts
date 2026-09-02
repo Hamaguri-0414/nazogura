@@ -28,13 +28,14 @@ describe('searchThemes', () => {
   it('「ひかり」で指の名前が見つかり、拾い元も正しい', () => {
     const results = searchThemes([fingers, weekdays], 'ひかり', defaults)
     expect(results).toHaveLength(1)
-    const { group: g, picks, missCount } = results[0]
+    const { group: g, combos, missCount } = results[0]
     expect(g.name).toBe('指の名前')
     expect(missCount).toBe(0)
-    expect(picks).toEqual([
-      { char: 'ひ', matched: true, elementIndex: 1, charIndexInElement: 0 },
-      { char: 'か', matched: true, elementIndex: 2, charIndexInElement: 1 },
-      { char: 'り', matched: true, elementIndex: 3, charIndexInElement: 2 },
+    expect(combos).toHaveLength(1)
+    expect(combos[0].picks).toEqual([
+      { char: 'ひ', matched: true, elementIndex: 1, charIndexInElement: 0, exact: true },
+      { char: 'か', matched: true, elementIndex: 2, charIndexInElement: 1, exact: true },
+      { char: 'り', matched: true, elementIndex: 3, charIndexInElement: 2, exact: true },
     ])
   })
 
@@ -44,18 +45,17 @@ describe('searchThemes', () => {
   })
 
   it('同じ文字が2回必要な場合、別の要素から拾う', () => {
-    // 「か」は なか(か) と か に含まれる
     const results = searchThemes([weekdays], 'かか', defaults)
     expect(results).toHaveLength(0)
-    const withFingers = searchThemes([group('か2つ', ['かき', 'かく'])], 'かか', defaults)
-    expect(withFingers).toHaveLength(1)
-    const idx = withFingers[0].picks.map((p) => p.elementIndex)
-    expect(new Set(idx).size).toBe(2)
+    const twoKa = searchThemes([group('か2つ', ['かき', 'かく'])], 'かか', defaults)
+    expect(twoKa).toHaveLength(1)
+    for (const combo of twoKa[0].combos) {
+      const idx = combo.picks.map((p) => p.elementIndex)
+      expect(new Set(idx).size).toBe(2)
+    }
   })
 
   it('増加路が必要なケースでも最大マッチングを見つける', () => {
-    // 「あ」は要素0のみ、「い」は要素0と1に含まれる。
-    // 「い」を先に要素0に割り当てると「あ」が拾えなくなるが、増加路で解決できる
     const g = group('増加路', ['あい', 'いう'])
     const results = searchThemes([g], 'いあ', defaults)
     expect(results).toHaveLength(1)
@@ -67,18 +67,19 @@ describe('searchThemes', () => {
     const results = searchThemes([fingers], 'ひかりん', { ...defaults, allowedMisses: 1 })
     expect(results).toHaveLength(1)
     expect(results[0].missCount).toBe(1)
-    expect(results[0].picks[3]).toEqual({ char: 'ん', matched: false })
+    expect(results[0].combos[0].picks[3]).toEqual({ char: 'ん', matched: false })
   })
 
-  it('表記ゆれ: 区別しないなら「ひがり」でも見つかる', () => {
-    expect(searchThemes([fingers], 'ひがり', defaults)).toHaveLength(1)
+  it('表記ゆれ: 区別しないなら「ひがり」でも見つかり、読み替え数が付く', () => {
+    const results = searchThemes([fingers], 'ひがり', defaults)
+    expect(results).toHaveLength(1)
+    expect(results[0].combos[0].fuzzyCount).toBe(1)
     expect(
       searchThemes([fingers], 'ひがり', { ...defaults, ignoreVariants: false }),
     ).toHaveLength(0)
   })
 
   it('同一要素からの複数拾い: OFFでは不可、ONなら可', () => {
-    // 「ひと」は どちらの文字も「ひとさし」に含まれる
     const g = group('単一要素', ['ひとさし'])
     expect(searchThemes([g], 'ひと', defaults)).toHaveLength(0)
     expect(
@@ -104,5 +105,36 @@ describe('searchThemes', () => {
     const g = group('アルファベット', ['abc', 'def'])
     const results = searchThemes([g], 'AD', defaults)
     expect(results).toHaveLength(1)
+  })
+
+  it('拾い方が複数あれば全て列挙される', () => {
+    // 「あ」は あか・あい から、「お」は あお のみから拾える → 2通り
+    const rainbow = group('虹の色', ['あか', 'だいだい', 'き', 'みどり', 'あお', 'あい', 'むらさき'])
+    const results = searchThemes([rainbow], 'あお', defaults)
+    expect(results).toHaveLength(1)
+    expect(results[0].combos).toHaveLength(2)
+    expect(results[0].combosTruncated).toBe(false)
+    const firstPicks = results[0].combos.map((c) => c.picks[0].elementIndex)
+    expect(new Set(firstPicks)).toEqual(new Set([0, 5]))
+  })
+
+  it('読み替えなしで成立する組み合わせが優先される', () => {
+    // 「か」は がま(読み替え) と かめ(そのまま) の両方から拾える
+    const g = group('読み替え優先', ['がま', 'かめ'])
+    const results = searchThemes([g], 'か', defaults)
+    expect(results[0].combos).toHaveLength(2)
+    expect(results[0].combos[0].fuzzyCount).toBe(0)
+    expect(results[0].combos[0].picks[0].elementIndex).toBe(1)
+    expect(results[0].combos[1].fuzzyCount).toBe(1)
+  })
+
+  it('要素内に読み替え一致とそのまま一致の両方があれば、そのままの位置を拾う', () => {
+    // 「はば」の1文字目は読み替えで「ば」に一致するが、2文字目がそのまま一致する
+    const g = group('位置の優先', ['はば'])
+    const results = searchThemes([g], 'ば', defaults)
+    const pick = results[0].combos[0].picks[0]
+    expect(pick.charIndexInElement).toBe(1)
+    expect(pick.exact).toBe(true)
+    expect(results[0].combos[0].fuzzyCount).toBe(0)
   })
 })

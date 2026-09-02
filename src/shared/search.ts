@@ -1,5 +1,5 @@
 import type { Group } from './types'
-import { normalizeForSearch } from './normalize'
+import { normalizeForSearch, toBase } from './normalize'
 
 export interface SearchOptions {
   /** 拾えない文字を何文字まで許容するか */
@@ -18,22 +18,112 @@ export interface CharPick {
   elementIndex?: number
   /** 要素内の何文字目か（0始まり） */
   charIndexInElement?: number
+  /** 濁点・小書き等の読み替えなしで一致しているか */
+  exact?: boolean
+}
+
+/** 1通りの拾い方 */
+export interface PickCombo {
+  picks: CharPick[]
+  /** 読み替え（濁点・小書き等の同一視）に頼った拾いの数。0なら区別しても成立する */
+  fuzzyCount: number
 }
 
 export interface ThemeMatch {
   group: Group
-  picks: CharPick[]
+  /** 拾い方の候補。読み替えの少ない順（先頭が代表） */
+  combos: PickCombo[]
+  /** 上限打ち切りで combos が全パターンではない場合 true */
+  combosTruncated: boolean
   missCount: number
 }
 
-/** 要素の各文字を正規化した配列（元の文字位置との対応を保つため1文字ずつ変換） */
+/** 1グループあたりの拾い方の列挙上限 */
+const COMBO_LIMIT = 20
+/** 列挙DFSの探索ノード数上限（暴走防止） */
+const SEARCH_STEP_LIMIT = 20000
+
+/** 元の文字位置との対応を保つため1文字ずつ正規化する */
 function normalizeChars(text: string, ignoreVariants: boolean): string[] {
   return [...text].map((ch) => normalizeForSearch(ch, ignoreVariants))
 }
 
+/** 増加路探索による最大マッチングのサイズ */
+function maxMatchingSize(candidates: number[][], elementCount: number): number {
+  const elementOwner = new Array<number>(elementCount).fill(-1)
+  const tryAssign = (i: number, visited: boolean[]): boolean => {
+    for (const j of candidates[i]) {
+      if (visited[j]) continue
+      visited[j] = true
+      if (elementOwner[j] === -1 || tryAssign(elementOwner[j], visited)) {
+        elementOwner[j] = i
+        return true
+      }
+    }
+    return false
+  }
+  let size = 0
+  for (let i = 0; i < candidates.length; i++) {
+    if (tryAssign(i, new Array<boolean>(elementCount).fill(false))) size++
+  }
+  return size
+}
+
+/**
+ * マッチ数が target になる割り当て（答えの文字ごとの拾い元要素、-1は未マッチ）を列挙する。
+ * COMBO_LIMIT 件で打ち切り、打ち切ったかどうかを返す。
+ */
+function enumerateAssignments(
+  candidates: number[][],
+  target: number,
+  allowMultiPick: boolean,
+): { assignments: number[][]; truncated: boolean } {
+  const len = candidates.length
+  const assignments: number[][] = []
+  const used = new Set<number>()
+  const current: number[] = []
+  let steps = 0
+  let truncated = false
+
+  const dfs = (i: number, matched: number): void => {
+    if (truncated) return
+    if (++steps > SEARCH_STEP_LIMIT) {
+      truncated = true
+      return
+    }
+    if (i === len) {
+      if (matched === target) {
+        assignments.push([...current])
+        if (assignments.length >= COMBO_LIMIT) truncated = true
+      }
+      return
+    }
+    // 残り全部拾えても target に届かないなら枝刈り
+    if (matched + (len - i) < target) return
+
+    for (const j of candidates[i]) {
+      if (!allowMultiPick && used.has(j)) continue
+      current.push(j)
+      if (!allowMultiPick) used.add(j)
+      dfs(i + 1, matched + 1)
+      current.pop()
+      if (!allowMultiPick) used.delete(j)
+      if (truncated) return
+    }
+    // この文字を拾わない選択肢
+    current.push(-1)
+    dfs(i + 1, matched)
+    current.pop()
+  }
+
+  dfs(0, 0)
+  return { assignments, truncated }
+}
+
 /**
  * 答えの単語を「グループ内の要素から1文字ずつ拾う」ことで構成できるテーマを検索する。
- * allowMultiPick=false のときは「答えの文字 × 要素」の二部グラフの最大マッチングで判定する。
+ * 各テーマについて拾い方を列挙し、読み替え（濁点・小書き等の同一視）が少ない
+ * 組み合わせを優先して返す。
  */
 export function searchThemes(
   groups: Group[],
@@ -41,66 +131,64 @@ export function searchThemes(
   options: SearchOptions,
 ): ThemeMatch[] {
   const answerChars = [...answer]
-  const normAnswer = normalizeChars(answer, options.ignoreVariants)
-  if (normAnswer.length === 0) return []
+  const searchAnswer = normalizeChars(answer, options.ignoreVariants)
+  const strictAnswer = normalizeChars(answer, false)
+  if (searchAnswer.length === 0) return []
 
   const results: ThemeMatch[] = []
 
   for (const group of groups) {
     if (!group.isPublished) continue
 
-    const normElements = group.elements.map((el) =>
+    const searchElements = group.elements.map((el) =>
       normalizeChars(el, options.ignoreVariants),
     )
+    const strictElements = group.elements.map((el) => [...toBase(el)])
 
     // 答えの各文字について、その文字を含む要素の一覧を作る
-    const candidates: number[][] = normAnswer.map((ch) =>
-      normElements.flatMap((chars, j) => (chars.includes(ch) ? [j] : [])),
+    const candidates: number[][] = searchAnswer.map((ch) =>
+      searchElements.flatMap((chars, j) => (chars.includes(ch) ? [j] : [])),
     )
 
-    // 答えの各文字の拾い元要素（-1 は未マッチ）
-    let assignment: number[]
+    const matchable = options.allowMultiPick
+      ? candidates.filter((cand) => cand.length > 0).length
+      : maxMatchingSize(candidates, group.elements.length)
+    const missCount = searchAnswer.length - matchable
+    if (missCount > options.allowedMisses) continue
 
-    if (options.allowMultiPick) {
-      // 同一要素からの複数拾いOK: 含む要素があれば先頭のものを拾う
-      assignment = candidates.map((cand) => (cand.length > 0 ? cand[0] : -1))
-    } else {
-      // 1要素1文字まで: 増加路探索による最大マッチング
-      const elementOwner = new Array<number>(group.elements.length).fill(-1)
-      const tryAssign = (i: number, visited: boolean[]): boolean => {
-        for (const j of candidates[i]) {
-          if (visited[j]) continue
-          visited[j] = true
-          if (elementOwner[j] === -1 || tryAssign(elementOwner[j], visited)) {
-            elementOwner[j] = i
-            return true
-          }
+    const { assignments, truncated } = enumerateAssignments(
+      candidates,
+      matchable,
+      options.allowMultiPick,
+    )
+
+    const combos: PickCombo[] = assignments.map((assignment) => {
+      let fuzzyCount = 0
+      const picks: CharPick[] = assignment.map((j, i) => {
+        if (j === -1) return { char: answerChars[i], matched: false }
+        // 拾う位置は、読み替えなしで一致する位置を優先する
+        const strictIndex = strictElements[j].findIndex(
+          (ch, k) => ch === strictAnswer[i] && searchElements[j][k] === searchAnswer[i],
+        )
+        const exact = strictIndex !== -1
+        if (!exact) fuzzyCount++
+        return {
+          char: answerChars[i],
+          matched: true,
+          elementIndex: j,
+          charIndexInElement: exact
+            ? strictIndex
+            : searchElements[j].indexOf(searchAnswer[i]),
+          exact,
         }
-        return false
-      }
-      for (let i = 0; i < normAnswer.length; i++) {
-        tryAssign(i, new Array(group.elements.length).fill(false))
-      }
-      assignment = new Array<number>(normAnswer.length).fill(-1)
-      elementOwner.forEach((i, j) => {
-        if (i !== -1) assignment[i] = j
       })
-    }
-
-    const picks: CharPick[] = assignment.map((j, i) => {
-      if (j === -1) return { char: answerChars[i], matched: false }
-      return {
-        char: answerChars[i],
-        matched: true,
-        elementIndex: j,
-        charIndexInElement: normElements[j].indexOf(normAnswer[i]),
-      }
+      return { picks, fuzzyCount }
     })
-    const missCount = picks.filter((p) => !p.matched).length
 
-    if (missCount <= options.allowedMisses) {
-      results.push({ group, picks, missCount })
-    }
+    // 読み替えなしで成立する組み合わせを先頭に（安定ソートで列挙順は保たれる）
+    combos.sort((a, b) => a.fuzzyCount - b.fuzzyCount)
+
+    results.push({ group, combos, combosTruncated: truncated, missCount })
   }
 
   results.sort(
