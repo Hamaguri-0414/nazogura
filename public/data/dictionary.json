@@ -1,0 +1,174 @@
+{
+  "groups": [
+    {
+      "id": "seed-yubi",
+      "name": "指の名前",
+      "category": "日常",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "おや",
+        "ひとさし",
+        "なか",
+        "くすり",
+        "こ"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-youbi",
+      "name": "曜日",
+      "category": "教育",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "にち",
+        "げつ",
+        "か",
+        "すい",
+        "もく",
+        "きん",
+        "ど"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-eto",
+      "name": "十二支",
+      "category": "教育",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "ね",
+        "うし",
+        "とら",
+        "う",
+        "たつ",
+        "み",
+        "うま",
+        "ひつじ",
+        "さる",
+        "とり",
+        "いぬ",
+        "い"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-niji",
+      "name": "虹の色",
+      "category": "教育",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "あか",
+        "だいだい",
+        "き",
+        "みどり",
+        "あお",
+        "あい",
+        "むらさき"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-hougaku",
+      "name": "方角",
+      "category": "教育",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "きた",
+        "みなみ",
+        "ひがし",
+        "にし"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-wakusei",
+      "name": "太陽系の惑星",
+      "category": "教育",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "すいせい",
+        "きんせい",
+        "ちきゅう",
+        "かせい",
+        "もくせい",
+        "どせい",
+        "てんのうせい",
+        "かいおうせい"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-onkai",
+      "name": "音階",
+      "category": "教育",
+      "note": "ドレミファソラシ",
+      "isPublished": true,
+      "elements": [
+        "ど",
+        "れ",
+        "み",
+        "ふぁ",
+        "そ",
+        "ら",
+        "し"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-trump",
+      "name": "トランプのマーク",
+      "category": "日常",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "すぺーど",
+        "はーと",
+        "だいや",
+        "くらぶ"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-janken",
+      "name": "じゃんけんの手",
+      "category": "日常",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "ぐー",
+        "ちょき",
+        "ぱー"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "seed-shingou",
+      "name": "信号の色",
+      "category": "日常",
+      "note": "",
+      "isPublished": true,
+      "elements": [
+        "あか",
+        "きいろ",
+        "あお"
+      ],
+      "createdAt": "2026-09-02T00:00:00.000Z",
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    }
+  ]
+}

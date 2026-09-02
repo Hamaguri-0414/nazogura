@@ -1,0 +1,109 @@
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.search-form input[type='text'] {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.1rem;
+}
+
+.search-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 0.9rem;
+  font-size: 0.9rem;
+}
+
+.search-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.result-summary {
+  margin: 1.25rem 0 0.75rem;
+  font-weight: 600;
+}
+
+.result-card h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.result-card .category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.05rem 0.6rem;
+}
+
+.result-card .miss-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-danger);
+  border-radius: 999px;
+  padding: 0.05rem 0.6rem;
+}
+
+.element-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+}
+
+.element-strip .elem {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.15rem 0.55rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+}
+
+.element-strip .picked {
+  background: var(--color-highlight);
+  border-radius: 3px;
+  font-weight: 700;
+  padding: 0 0.05em;
+}
+
+.pick-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.95rem;
+}
+
+.pick-list li {
+  padding: 0.1rem 0;
+}
+
+.pick-list .pick-char {
+  display: inline-block;
+  min-width: 1.5em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pick-list .missed {
+  color: var(--color-danger);
+}
+
+.loading,
+.no-result {
+  text-align: center;
+  color: var(--color-muted);
+  padding: 2rem 0;
+}
