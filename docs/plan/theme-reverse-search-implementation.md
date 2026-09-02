@@ -15,7 +15,7 @@
 ## ディレクトリ構成
 
 ```
-Riddles/
+Nazogura/
 ├── index.html                        # トップ（ツール一覧）
 ├── tools/theme-reverse-search/
 │   └── index.html                    # 検索ページ（公開）

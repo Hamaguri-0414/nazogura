@@ -36,7 +36,7 @@ export function App() {
       <div className="admin-banner">ローカル管理モード - 編集内容は辞書マスターJSONに保存されます</div>
       <header className="site-header">
         <span className="brand">
-          Riddles <span>辞書管理</span>
+          謎蔵 <span>辞書管理</span>
         </span>
       </header>
       <main>

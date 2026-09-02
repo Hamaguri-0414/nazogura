@@ -3,7 +3,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <a className="brand" href={base}>
-        Riddles <span>謎解き制作支援ツール</span>
+        謎蔵 <span>謎解き制作支援ツール</span>
       </a>
       <nav>
         <a href={`${base}tools/theme-reverse-search/`}>テーマ逆引き検索</a>

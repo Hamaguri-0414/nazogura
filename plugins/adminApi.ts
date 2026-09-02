@@ -61,7 +61,7 @@ function validateGroupInput(input: GroupInput): string | null {
  */
 export function adminApiPlugin(): Plugin {
   return {
-    name: 'riddles-admin-api',
+    name: 'nazogura-admin-api',
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use('/api/admin', (req, res) => {
