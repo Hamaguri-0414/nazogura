@@ -2,7 +2,6 @@
 export interface Group {
   id: string
   name: string
-  category: string
   note: string
   isPublished: boolean
   /** ひらがなのみ、または半角英字（小文字）のみ */

@@ -64,7 +64,6 @@ export function ResultCard({ match }: { match: ThemeMatch }) {
     <section className="card result-card">
       <h2>
         {group.name}
-        {group.category !== '' && <span className="category">{group.category}</span>}
         {missCount > 0 && <span className="miss-badge">{missCount}文字拾えません</span>}
       </h2>
 

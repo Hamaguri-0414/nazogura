@@ -4,7 +4,6 @@ const BASE = '/api/admin'
 
 export interface GroupInput {
   name: string
-  category: string
   note: string
   isPublished: boolean
   elements: string[]

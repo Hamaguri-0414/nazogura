@@ -6,7 +6,6 @@ function group(name: string, elements: string[], isPublished = true): Group {
   return {
     id: name,
     name,
-    category: 'テスト',
     note: '',
     isPublished,
     elements,

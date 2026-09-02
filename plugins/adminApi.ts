@@ -33,7 +33,6 @@ function sendJson(res: ServerResponse, status: number, data: unknown): void {
 
 interface GroupInput {
   name?: unknown
-  category?: unknown
   note?: unknown
   isPublished?: unknown
   elements?: unknown
@@ -95,7 +94,6 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     const group: Group = {
       id: randomUUID(),
       name: (input.name as string).trim(),
-      category: typeof input.category === 'string' ? input.category.trim() : '',
       note: typeof input.note === 'string' ? input.note : '',
       isPublished: input.isPublished !== false,
       elements: input.elements as string[],
@@ -129,7 +127,6 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       const updated: Group = {
         ...current,
         name: (input.name as string).trim(),
-        category: typeof input.category === 'string' ? input.category.trim() : '',
         note: typeof input.note === 'string' ? input.note : '',
         isPublished: input.isPublished !== false,
         elements: input.elements as string[],
@@ -175,7 +172,6 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       dict.groups.push({
         id: randomUUID(),
         name,
-        category: '',
         note: '',
         isPublished: true,
         elements: g.elements as string[],

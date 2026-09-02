@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Dictionary, Group } from '../shared/types'
 import { toBase } from '../shared/normalize'
 import { validateElementName } from '../shared/validate'
@@ -21,7 +21,6 @@ const newRow = (value = ''): ElementRow => ({ key: nextKey++, value })
 
 export function GroupEditor({ dict, group, onDone }: Props) {
   const [name, setName] = useState(group?.name ?? '')
-  const [category, setCategory] = useState(group?.category ?? '')
   const [note, setNote] = useState(group?.note ?? '')
   const [isPublished, setIsPublished] = useState(group?.isPublished ?? true)
   const [rows, setRows] = useState<ElementRow[]>(() =>
@@ -31,11 +30,6 @@ export function GroupEditor({ dict, group, onDone }: Props) {
   const [saving, setSaving] = useState(false)
   const focusKey = useRef<number | null>(null)
   const dragIndex = useRef<number | null>(null)
-
-  const categories = useMemo(
-    () => [...new Set(dict.groups.map((g) => g.category).filter((c) => c !== ''))],
-    [dict],
-  )
 
   const updateRow = (key: number, value: string) => {
     setRows((rs) => rs.map((r) => (r.key === key ? { ...r, value } : r)))
@@ -93,7 +87,7 @@ export function GroupEditor({ dict, group, onDone }: Props) {
 
     setSaving(true)
     setSaveError(null)
-    const input = { name: name.trim(), category, note, isPublished, elements }
+    const input = { name: name.trim(), note, isPublished, elements }
     try {
       if (group === null) {
         await createGroup(input)
@@ -134,31 +128,14 @@ export function GroupEditor({ dict, group, onDone }: Props) {
           グループ名
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
         </label>
-        <div className="form-row-inline">
-          <label className="form-row">
-            カテゴリ
-            <input
-              type="text"
-              list="category-list"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="例: 教育、日常"
-            />
-            <datalist id="category-list">
-              {categories.map((c) => (
-                <option key={c} value={c} />
-              ))}
-            </datalist>
-          </label>
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              checked={isPublished}
-              onChange={(e) => setIsPublished(e.target.checked)}
-            />
-            公開する
-          </label>
-        </div>
+        <label className="checkbox-row">
+          <input
+            type="checkbox"
+            checked={isPublished}
+            onChange={(e) => setIsPublished(e.target.checked)}
+          />
+          公開する
+        </label>
 
         <div className="form-row">
           <span>
