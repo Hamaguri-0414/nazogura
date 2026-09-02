@@ -7,7 +7,10 @@ interface Props {
   words: string[] | null
 }
 
-/** 文字数ごとに単語を区切る（辞書ファイルは五十音順のため、区切り内も五十音順になる） */
+/**
+ * 文字数ごとに単語を区切り、文字数の多い順に並べる（長い単語ほど希少価値が高いため）。
+ * 辞書ファイルは五十音順のため、区切り内は五十音順になる。
+ */
 function groupByLength(words: string[]): Map<number, string[]> {
   const map = new Map<number, string[]>()
   for (const word of words) {
@@ -16,7 +19,7 @@ function groupByLength(words: string[]): Map<number, string[]> {
     if (list) list.push(word)
     else map.set(len, [word])
   }
-  return new Map([...map.entries()].sort((a, b) => a[0] - b[0]))
+  return new Map([...map.entries()].sort((a, b) => b[0] - a[0]))
 }
 
 export function GroupDetail({ group, words }: Props) {
