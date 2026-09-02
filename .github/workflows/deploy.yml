@@ -1,0 +1,44 @@
+# mainが更新されたら、ビルドしてlolipop（hamaguri.dev）へFTPSでデプロイする
+name: Deploy to hamaguri.dev
+
+on:
+  push:
+    branches: [main]
+  # 手動実行もできるようにしておく（初回デプロイや再デプロイ用）
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.LOLIPOP_FTP_SERVER }}
+          username: ${{ secrets.LOLIPOP_FTP_USERNAME }}
+          password: ${{ secrets.LOLIPOP_FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: dist/
+          # 公開URLは https://hamaguri.dev/nazogura/ （vite.config.ts の base と対応）
+          # hamaguri_dev/ はlolipopの独自ドメイン設定でhamaguri.devに指定している公開フォルダ
+          server-dir: hamaguri_dev/nazogura/

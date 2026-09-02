@@ -1,0 +1,143 @@
+.list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.list-toolbar input[type='text'] {
+  flex: 1;
+  min-width: 180px;
+}
+
+.group-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+
+.group-table th,
+.group-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.group-table th {
+  background: var(--color-bg);
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.group-table tbody tr {
+  cursor: pointer;
+}
+
+.group-table tbody tr:hover {
+  background: #f0f2fb;
+}
+
+.elements-preview {
+  font-size: 0.8rem;
+  max-width: 28rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.editor-form .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.form-row-inline {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.element-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.element-row + .element-row {
+  margin-top: 0.35rem;
+}
+
+.element-row input[type='text'] {
+  width: 14rem;
+}
+
+.element-row button {
+  padding: 0.25rem 0.55rem;
+}
+
+.element-row .field-error {
+  margin: 0;
+}
+
+.drag-handle {
+  cursor: grab;
+  color: var(--color-muted);
+  user-select: none;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.preview-list {
+  list-style: none;
+  margin: 0.5rem 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.preview-list li {
+  padding: 0.15rem 0;
+}
+
+.preview-ok {
+  color: #1e7e34;
+}
+
+.preview-skip {
+  color: #a86a00;
+}
+
+.preview-error {
+  color: var(--color-danger);
+}

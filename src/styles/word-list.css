@@ -1,0 +1,127 @@
+.wl-main {
+  max-width: 1080px;
+}
+
+.dict-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.dict-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dict-tab.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.dict-count {
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.wl-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.group-nav {
+  padding: 0.6rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.group-nav-status {
+  margin: 0.2rem 0.4rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.group-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.group-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  background: none;
+  padding: 0.3rem 0.55rem;
+  text-align: left;
+}
+
+.group-row:hover {
+  background: var(--color-bg);
+}
+
+.group-row.selected {
+  background: #eef0fb;
+  border-color: var(--color-primary);
+}
+
+.group-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-row-count {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.wl-group-title {
+  margin: 0;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.wl-length-heading {
+  margin: 1rem 0 0.35rem;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.2rem;
+}
+
+.word-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.45rem;
+}
+
+.word-chip {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 720px) {
+  .wl-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .group-nav {
+    max-height: 40vh;
+  }
+}
