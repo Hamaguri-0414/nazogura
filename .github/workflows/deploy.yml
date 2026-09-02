@@ -40,5 +40,5 @@ jobs:
           protocol: ftps
           local-dir: dist/
           # 公開URLは https://hamaguri.dev/nazogura/ （vite.config.ts の base と対応）
-          # FTPルートから見た公開フォルダの位置が異なる場合はここを調整する
-          server-dir: nazogura/
+          # hamaguri_dev/ はlolipopの独自ドメイン設定でhamaguri.devに指定している公開フォルダ
+          server-dir: hamaguri_dev/nazogura/
