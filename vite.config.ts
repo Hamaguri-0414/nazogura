@@ -5,7 +5,12 @@ import { adminApiPlugin } from './plugins/adminApi'
 
 // 公開ビルドにはトップと検索ページのみを含める。
 // admin/ は開発サーバー（npm run admin）専用で、ビルド対象外。
-export default defineConfig({
+// 公開先は https://hamaguri.dev/nazogura/ のため、build と preview では
+// baseを /nazogura/ にする（開発サーバーは従来どおり http://localhost:5173/ 直下）。
+export default defineConfig(({ command, isPreview }) => ({
+  base: command === 'build' || isPreview ? '/nazogura/' : '/',
+  // マルチページ構成のため、SPA用のindex.htmlフォールバックを無効化する
+  appType: 'mpa',
   plugins: [react(), adminApiPlugin()],
   build: {
     rollupOptions: {
@@ -22,4 +27,4 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts'],
   },
-})
+}))
