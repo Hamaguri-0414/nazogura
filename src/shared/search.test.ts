@@ -136,4 +136,23 @@ describe('searchThemes', () => {
     expect(pick.exact).toBe(true)
     expect(results[0].combos[0].fuzzyCount).toBe(0)
   })
+
+  it('列挙が打ち切られても、読み替えなしの組み合わせが先頭に残る', () => {
+    // 「は」を読み替えで拾える要素6つを前に、そのまま拾える要素2つを後ろに並べる。
+    // 「はは」の拾い方は 8×7=56 通りで COMBO_LIMIT(20) を超えて打ち切られるため、
+    // 要素順のまま列挙すると読み替えなしの組み合わせ（後ろの2要素）が漏れる
+    const g = group('打ち切り', [
+      'ばら',
+      'ばす',
+      'ばね',
+      'ばんり',
+      'ばかり',
+      'ばぶ',
+      'はな',
+      'はし',
+    ])
+    const results = searchThemes([g], 'はは', defaults)
+    expect(results[0].combosTruncated).toBe(true)
+    expect(results[0].combos[0].fuzzyCount).toBe(0)
+  })
 })
