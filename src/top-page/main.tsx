@@ -9,7 +9,6 @@ function TopPage() {
     <>
       <SiteHeader />
       <main>
-        <h1>謎解き制作支援ツール</h1>
         <a className="card tool-card" href={`${base}tools/theme-reverse-search/`}>
           <h2>テーマ逆引き検索</h2>
           <p className="muted">
