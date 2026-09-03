@@ -231,7 +231,11 @@ export function App() {
             </nav>
             <div className="wl-detail">
               {selectedGroup !== null && (
-                <GroupDetail group={selectedGroup} words={selectedWords} />
+                <GroupDetail
+                  group={selectedGroup}
+                  words={selectedWords}
+                  options={options}
+                />
               )}
             </div>
           </div>

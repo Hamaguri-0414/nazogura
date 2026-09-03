@@ -1,10 +1,18 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import type { Group } from '../shared/types'
+import type { ComposeOptions } from '../shared/wordCompose'
+import { searchThemes, type ThemeMatch } from '../shared/search'
+import {
+  ComboInline,
+  HighlightedElement,
+  pickedPositions,
+} from '../components/PickDisplay'
 
 interface Props {
   group: Group
   /** null は計算中 */
   words: string[] | null
+  options: ComposeOptions
 }
 
 /**
@@ -22,7 +30,71 @@ function groupByLength(words: string[]): Map<number, string[]> {
   return new Map([...map.entries()].sort((a, b) => b[0] - a[0]))
 }
 
-export function GroupDetail({ group, words }: Props) {
+/** 選択中の単語の拾い方を、単語チップの直後に差し込みで表示する */
+function WordPickDetail({ group, match }: { group: Group; match: ThemeMatch }) {
+  const [comboIndex, setComboIndex] = useState(0)
+  const [expanded, setExpanded] = useState(false)
+  const combo = match.combos[comboIndex] ?? match.combos[0]
+
+  return (
+    <div className="word-pick-detail">
+      <ComboInline group={group} combo={combo} />
+      {combo.fuzzyCount > 0 && (
+        <span className="fuzzy-note">読み替え{combo.fuzzyCount}文字</span>
+      )}
+      {match.combos.length > 1 && (
+        <div className="combo-area">
+          <button className="combo-toggle" onClick={() => setExpanded(!expanded)}>
+            {expanded ? '▾' : '▸'} 他の組み合わせ {match.combos.length - 1}件
+            {match.combosTruncated ? '以上' : ''}
+          </button>
+          {expanded && (
+            <ol className="combo-list">
+              {match.combos.map((c, idx) => (
+                <li key={idx}>
+                  <button
+                    className={idx === comboIndex ? 'combo-row selected' : 'combo-row'}
+                    onClick={() => setComboIndex(idx)}
+                  >
+                    <ComboInline group={group} combo={c} />
+                    {c.fuzzyCount > 0 && (
+                      <span className="fuzzy-note">読み替え{c.fuzzyCount}文字</span>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export function GroupDetail({ group, words, options }: Props) {
+  const [selectedWord, setSelectedWord] = useState<string | null>(null)
+
+  // グループやオプションが変わったら選択を解除する
+  useEffect(() => {
+    setSelectedWord(null)
+  }, [group.id, options])
+
+  const match = useMemo(() => {
+    if (selectedWord === null) return null
+    return (
+      searchThemes([group], selectedWord, {
+        allowedMisses: 0,
+        ignoreVariants: options.ignoreVariants,
+        allowMultiPick: options.allowMultiPick,
+      })[0] ?? null
+    )
+  }, [group, selectedWord, options])
+
+  const stripPicked =
+    match !== null && match.combos.length > 0
+      ? pickedPositions(match.combos[0])
+      : null
+
   return (
     <section className="card">
       <h2 className="wl-group-title">
@@ -35,7 +107,7 @@ export function GroupDetail({ group, words }: Props) {
       <div className="element-strip">
         {group.elements.map((el, j) => (
           <span key={j} className="elem">
-            {el}
+            <HighlightedElement text={el} positions={stripPicked?.get(j)} />
           </span>
         ))}
       </div>
@@ -52,9 +124,17 @@ export function GroupDetail({ group, words }: Props) {
             </h3>
             <div className="word-flow">
               {list.map((w) => (
-                <span key={w} className="word-chip">
-                  {w}
-                </span>
+                <Fragment key={w}>
+                  <button
+                    className={w === selectedWord ? 'word-chip selected' : 'word-chip'}
+                    onClick={() => setSelectedWord(w === selectedWord ? null : w)}
+                  >
+                    {w}
+                  </button>
+                  {w === selectedWord && match !== null && (
+                    <WordPickDetail key={w} group={group} match={match} />
+                  )}
+                </Fragment>
               ))}
             </div>
           </Fragment>
