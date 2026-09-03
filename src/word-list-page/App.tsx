@@ -35,9 +35,10 @@ export function App() {
   const [selectedWords, setSelectedWords] = useState<string[] | null>(null)
   const [loadingWords, setLoadingWords] = useState(false)
 
-  // 単語リスト（生データ）と正規化済みデータのキャッシュ
-  const wordsCache = useRef(new Map<string, string[]>())
-  const normCache = useRef(new Map<string, string[][]>())
+  // 単語リスト（生データ）と正規化済みデータのキャッシュ。
+  // 解決済みの値ではなくPromiseを保持し、取得中の同時要求を1つに束ねる
+  const wordsCache = useRef(new Map<string, Promise<string[]>>())
+  const normCache = useRef(new Map<string, Promise<string[][]>>())
 
   useEffect(() => {
     const base = import.meta.env.BASE_URL
@@ -59,39 +60,47 @@ export function App() {
   }, [])
 
   const ensureWords = useCallback(
-    async (dictId: string): Promise<string[]> => {
+    (dictId: string): Promise<string[]> => {
       const cached = wordsCache.current.get(dictId)
       if (cached) return cached
       const dict = wordDicts?.find((d) => d.id === dictId)
-      if (!dict) throw new Error('unknown dictionary')
-      setLoadingWords(true)
-      try {
-        const res = await fetch(`${import.meta.env.BASE_URL}data/words/${dict.file}`)
-        if (!res.ok) throw new Error(dict.file)
-        const text = await res.text()
-        const words = text.split('\n').filter((w) => w !== '')
-        wordsCache.current.set(dictId, words)
-        return words
-      } finally {
-        setLoadingWords(false)
-      }
+      if (!dict) return Promise.reject(new Error('unknown dictionary'))
+      const loading = (async () => {
+        setLoadingWords(true)
+        try {
+          const res = await fetch(`${import.meta.env.BASE_URL}data/words/${dict.file}`)
+          if (!res.ok) throw new Error(dict.file)
+          const text = await res.text()
+          return text.split('\n').filter((w) => w !== '')
+        } finally {
+          setLoadingWords(false)
+        }
+      })()
+      wordsCache.current.set(dictId, loading)
+      // 失敗した結果はキャッシュに残さない（再試行できるように）
+      loading.catch(() => wordsCache.current.delete(dictId))
+      return loading
     },
     [wordDicts],
   )
 
   const ensureNorm = useCallback(
-    async (dictId: string, ignoreVariants: boolean): Promise<string[][]> => {
+    (dictId: string, ignoreVariants: boolean): Promise<string[][]> => {
       const key = `${dictId}:${ignoreVariants}`
       const cached = normCache.current.get(key)
       if (cached) return cached
-      const words = await ensureWords(dictId)
-      const norm: string[][] = new Array(words.length)
-      for (let i = 0; i < words.length; i++) {
-        norm[i] = normalizeWord(words[i], ignoreVariants)
-        if (i % CHUNK === CHUNK - 1) await yieldToUi()
-      }
-      normCache.current.set(key, norm)
-      return norm
+      const normalizing = (async () => {
+        const words = await ensureWords(dictId)
+        const norm: string[][] = new Array(words.length)
+        for (let i = 0; i < words.length; i++) {
+          norm[i] = normalizeWord(words[i], ignoreVariants)
+          if (i % CHUNK === CHUNK - 1) await yieldToUi()
+        }
+        return norm
+      })()
+      normCache.current.set(key, normalizing)
+      normalizing.catch(() => normCache.current.delete(key))
+      return normalizing
     },
     [ensureWords],
   )

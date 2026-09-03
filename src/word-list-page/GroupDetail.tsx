@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, memo, useEffect, useMemo, useState } from 'react'
 import type { Group } from '../shared/types'
 import type { ComposeOptions } from '../shared/wordCompose'
 import { searchThemes, type ThemeMatch } from '../shared/search'
@@ -71,7 +71,11 @@ function WordPickDetail({ group, match }: { group: Group; match: ThemeMatch }) {
   )
 }
 
-export function GroupDetail({ group, words, options }: Props) {
+/**
+ * 単語数スイープ中は親が高頻度で再レンダーされるため、propsが変わらない
+ * 限り再レンダーしないようmemo化している。
+ */
+export const GroupDetail = memo(function GroupDetail({ group, words, options }: Props) {
   const [selectedWord, setSelectedWord] = useState<string | null>(null)
 
   // グループやオプションが変わったら選択を解除する
@@ -95,6 +99,11 @@ export function GroupDetail({ group, words, options }: Props) {
       ? pickedPositions(match.combos[0])
       : null
 
+  const byLength = useMemo(
+    () => (words === null ? null : groupByLength(words)),
+    [words],
+  )
+
   return (
     <section className="card">
       <h2 className="wl-group-title">
@@ -116,8 +125,8 @@ export function GroupDetail({ group, words, options }: Props) {
       {words !== null && words.length === 0 && (
         <p className="no-result">このテーマから作れる単語は見つかりませんでした</p>
       )}
-      {words !== null &&
-        [...groupByLength(words).entries()].map(([len, list]) => (
+      {byLength !== null &&
+        [...byLength.entries()].map(([len, list]) => (
           <Fragment key={len}>
             <h3 className="wl-length-heading">
               {len}文字 <span className="muted">({list.length.toLocaleString()})</span>
@@ -132,7 +141,7 @@ export function GroupDetail({ group, words, options }: Props) {
                     {w}
                   </button>
                   {w === selectedWord && match !== null && (
-                    <WordPickDetail key={w} group={group} match={match} />
+                    <WordPickDetail group={group} match={match} />
                   )}
                 </Fragment>
               ))}
@@ -141,4 +150,4 @@ export function GroupDetail({ group, words, options }: Props) {
         ))}
     </section>
   )
-}
+})
