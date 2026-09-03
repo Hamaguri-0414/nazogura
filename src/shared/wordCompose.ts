@@ -1,6 +1,6 @@
 import type { Group } from './types'
-import { normalizeForSearch } from './normalize'
-import { maxMatchingSize } from './matching'
+import { normalizeChars } from './normalize'
+import { buildCandidates, maxMatchingSize } from './matching'
 
 export interface ComposeOptions {
   /** 濁点・半濁点・小書き文字を区別しない */
@@ -15,9 +15,7 @@ export interface GroupMatcher {
 }
 
 /** 単語を判定用に正規化する（1文字ずつの配列にする） */
-export function normalizeWord(word: string, ignoreVariants: boolean): string[] {
-  return [...word].map((ch) => normalizeForSearch(ch, ignoreVariants))
-}
+export const normalizeWord = normalizeChars
 
 /**
  * グループに対する「作れる単語」判定器を作る。
@@ -25,7 +23,7 @@ export function normalizeWord(word: string, ignoreVariants: boolean): string[] {
  */
 export function createGroupMatcher(group: Group, options: ComposeOptions): GroupMatcher {
   const elementChars = group.elements.map((el) =>
-    [...el].map((ch) => normalizeForSearch(ch, options.ignoreVariants)),
+    normalizeChars(el, options.ignoreVariants),
   )
   const charSet = new Set<string>(elementChars.flat())
   const elementCount = group.elements.length
@@ -39,9 +37,7 @@ export function createGroupMatcher(group: Group, options: ComposeOptions): Group
     // 複数拾いOKなら「全文字がどこかの要素にある」＝charSet判定で確定
     if (options.allowMultiPick) return true
 
-    const candidates = wordChars.map((ch) =>
-      elementChars.flatMap((chars, j) => (chars.includes(ch) ? [j] : [])),
-    )
+    const candidates = buildCandidates(wordChars, elementChars)
     return maxMatchingSize(candidates, elementCount) === wordChars.length
   }
 

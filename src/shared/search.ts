@@ -1,14 +1,11 @@
 import type { Group } from './types'
-import { normalizeForSearch, toBase } from './normalize'
-import { maxMatchingSize } from './matching'
+import { normalizeChars, toBase } from './normalize'
+import { buildCandidates, maxMatchingSize } from './matching'
+import type { ComposeOptions } from './wordCompose'
 
-export interface SearchOptions {
+export interface SearchOptions extends ComposeOptions {
   /** 拾えない文字を何文字まで許容するか */
   allowedMisses: number
-  /** 濁点・半濁点・小書き文字を区別しない */
-  ignoreVariants: boolean
-  /** 同一要素から2文字以上拾うことを許可する */
-  allowMultiPick: boolean
 }
 
 export interface CharPick {
@@ -43,11 +40,6 @@ export interface ThemeMatch {
 const COMBO_LIMIT = 20
 /** 列挙DFSの探索ノード数上限（暴走防止） */
 const SEARCH_STEP_LIMIT = 20000
-
-/** 元の文字位置との対応を保つため1文字ずつ正規化する */
-function normalizeChars(text: string, ignoreVariants: boolean): string[] {
-  return [...text].map((ch) => normalizeForSearch(ch, ignoreVariants))
-}
 
 /**
  * マッチ数が target になる割り当て（答えの文字ごとの拾い元要素、-1は未マッチ）を列挙する。
@@ -128,14 +120,13 @@ export function searchThemes(
     // 答えの各文字について、その文字を含む要素の一覧を作る。
     // 読み替えなしで一致する要素を先頭に並べ、列挙が COMBO_LIMIT で
     // 打ち切られた場合でも読み替えの少ない組み合わせが結果に残るようにする
-    const candidates: number[][] = searchAnswer.map((ch, i) => {
+    const candidates = buildCandidates(searchAnswer, searchElements)
+    candidates.forEach((cand, i) => {
       const isExact = (j: number) =>
         strictElements[j].some(
-          (c, k) => c === strictAnswer[i] && searchElements[j][k] === ch,
+          (c, k) => c === strictAnswer[i] && searchElements[j][k] === searchAnswer[i],
         )
-      return searchElements
-        .flatMap((chars, j) => (chars.includes(ch) ? [j] : []))
-        .sort((a, b) => Number(isExact(b)) - Number(isExact(a)))
+      cand.sort((a, b) => Number(isExact(b)) - Number(isExact(a)))
     })
 
     const matchable = options.allowMultiPick
