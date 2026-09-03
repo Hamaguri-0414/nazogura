@@ -1,0 +1,115 @@
+.kt-main {
+  max-width: 720px;
+}
+
+.kt-stats {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.kt-board {
+  padding: 1.25rem;
+}
+
+/* 五十音表: 右端があ行になるよう列を逆順に並べる */
+.kana-grid {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 2px;
+}
+
+.kana-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kana-cell {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kana-cell.empty {
+  border-color: transparent;
+  background: transparent;
+}
+
+.kana-marks {
+  display: flex;
+  gap: 1px;
+  flex-wrap: wrap;
+  justify-content: center;
+  line-height: 1;
+}
+
+.kana-mark {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.kt-answer {
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+.kt-input-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.kt-input-row input {
+  width: 14rem;
+  text-align: center;
+}
+
+.kt-result {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+}
+
+.kt-result.correct {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.kt-result strong {
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+}
+
+.kt-giveup {
+  display: inline-block;
+  margin-top: 0.5rem;
+  border: none;
+  background: none;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  padding: 0.2rem 0.5rem;
+}
+
+.kt-giveup:hover {
+  color: var(--color-danger);
+}
+
+@media (max-width: 640px) {
+  .kana-cell {
+    width: 8.2vw;
+    height: 8.2vw;
+  }
+
+  .kana-mark {
+    font-size: 3.6vw;
+  }
+}

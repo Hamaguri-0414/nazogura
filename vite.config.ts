@@ -24,6 +24,10 @@ export default defineConfig(({ command, isPreview }) => ({
           import.meta.dirname,
           'tools/theme-word-list/index.html',
         ),
+        kanaPickupTraining: resolve(
+          import.meta.dirname,
+          'tools/kana-pickup-training/index.html',
+        ),
       },
     },
   },

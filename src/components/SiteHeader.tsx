@@ -3,7 +3,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <a className="brand" href={base}>
-        謎蔵 -なぞぐら- <span>| 謎解き制作支援ツール</span>
+        謎蔵 -なぞぐら-
       </a>
     </header>
   )
