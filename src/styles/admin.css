@@ -38,7 +38,7 @@
 }
 
 .group-table tbody tr:hover {
-  background: #f0f2fb;
+  background: var(--color-primary-tint);
 }
 
 .elements-preview {

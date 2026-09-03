@@ -9,6 +9,7 @@
   --color-danger: #c0392b;
   --color-warn-bg: #fff4e0;
   --color-highlight: #ffe172;
+  --color-primary-tint: #eef0fb;
   --radius: 8px;
 }
 
@@ -150,6 +151,21 @@ input.invalid {
 .muted {
   color: var(--color-muted);
   font-size: 0.9rem;
+}
+
+/* 拾われた文字のハイライト（PickDisplay系コンポーネントで共通） */
+.picked {
+  background: var(--color-highlight);
+  border-radius: 3px;
+  font-weight: 700;
+  padding: 0 0.05em;
+}
+
+.loading,
+.no-result {
+  text-align: center;
+  color: var(--color-muted);
+  padding: 2rem 0;
 }
 
 a.tool-card {
