@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Dictionary } from '../shared/types'
 import { parseImportText, type ParsedLine } from '../shared/importParser'
-import { importGroups, type ImportResult } from './api'
+import { importGroups, toErrorMessage, type ImportResult } from './api'
 
 interface Props {
   dict: Dictionary
@@ -44,7 +44,7 @@ export function ImportView({ dict, onDone }: Props) {
       setPreview(null)
       setText('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      setError(toErrorMessage(err))
     } finally {
       setImporting(false)
     }

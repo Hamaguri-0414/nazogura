@@ -38,6 +38,33 @@ interface GroupInput {
   elements?: unknown
 }
 
+/**
+ * 検証済みの入力から保存用の共通フィールドを組み立てる。
+ * validateGroupInput を通過した入力に対してのみ呼ぶこと。
+ */
+function groupFieldsFrom(
+  input: GroupInput,
+): Pick<Group, 'name' | 'note' | 'isPublished' | 'elements'> {
+  return {
+    name: (input.name as string).trim(),
+    note: typeof input.note === 'string' ? input.note : '',
+    isPublished: input.isPublished !== false,
+    elements: input.elements as string[],
+  }
+}
+
+/**
+ * ローカル管理API用のオリジン検証。同一マシンのブラウザからの利用のみを
+ * 想定しているため、外部サイトのページからのクロスオリジン要求
+ * （プリフライトの走らないシンプルリクエスト含む）を拒否する。
+ * Originヘッダが付かない要求（curl等）はローカル操作とみなして許可する。
+ */
+function isAllowedOrigin(req: IncomingMessage): boolean {
+  const origin = req.headers.origin
+  if (origin === undefined) return true
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+}
+
 /** グループ入力の検証。エラーメッセージまたはnullを返す */
 function validateGroupInput(input: GroupInput): string | null {
   if (typeof input.name !== 'string' || input.name.trim() === '') {
@@ -64,8 +91,13 @@ export function adminApiPlugin(): Plugin {
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use('/api/admin', (req, res) => {
+        if (!isAllowedOrigin(req)) {
+          sendJson(res, 403, { error: 'forbidden origin' })
+          return
+        }
         void handle(req, res).catch((err: unknown) => {
-          sendJson(res, 500, { error: String(err) })
+          console.error('[admin-api]', err)
+          sendJson(res, 500, { error: 'サーバー内部でエラーが発生しました' })
         })
       })
     },
@@ -93,10 +125,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     const now = new Date().toISOString()
     const group: Group = {
       id: randomUUID(),
-      name: (input.name as string).trim(),
-      note: typeof input.note === 'string' ? input.note : '',
-      isPublished: input.isPublished !== false,
-      elements: input.elements as string[],
+      ...groupFieldsFrom(input),
       createdAt: now,
       updatedAt: now,
     }
@@ -126,10 +155,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       const current = dict.groups[index]
       const updated: Group = {
         ...current,
-        name: (input.name as string).trim(),
-        note: typeof input.note === 'string' ? input.note : '',
-        isPublished: input.isPublished !== false,
-        elements: input.elements as string[],
+        ...groupFieldsFrom(input),
         updatedAt: new Date().toISOString(),
       }
       dict.groups[index] = updated
@@ -171,10 +197,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       }
       dict.groups.push({
         id: randomUUID(),
-        name,
-        note: '',
-        isPublished: true,
-        elements: g.elements as string[],
+        ...groupFieldsFrom({ ...g, isPublished: true }),
         createdAt: now,
         updatedAt: now,
       })
