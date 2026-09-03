@@ -4,7 +4,8 @@ import type { ComposeOptions } from '../shared/wordCompose'
 import { searchThemes, type ThemeMatch } from '../shared/search'
 import {
   ComboInline,
-  HighlightedElement,
+  ComboSwitcher,
+  ElementStrip,
   pickedPositions,
 } from '../components/PickDisplay'
 
@@ -33,7 +34,6 @@ function groupByLength(words: string[]): Map<number, string[]> {
 /** 選択中の単語の拾い方を、単語チップの直後に差し込みで表示する */
 function WordPickDetail({ group, match }: { group: Group; match: ThemeMatch }) {
   const [comboIndex, setComboIndex] = useState(0)
-  const [expanded, setExpanded] = useState(false)
   const combo = match.combos[comboIndex] ?? match.combos[0]
 
   return (
@@ -42,31 +42,13 @@ function WordPickDetail({ group, match }: { group: Group; match: ThemeMatch }) {
       {combo.fuzzyCount > 0 && (
         <span className="fuzzy-note">読み替え{combo.fuzzyCount}文字</span>
       )}
-      {match.combos.length > 1 && (
-        <div className="combo-area">
-          <button className="combo-toggle" onClick={() => setExpanded(!expanded)}>
-            {expanded ? '▾' : '▸'} 他の組み合わせ {match.combos.length - 1}件
-            {match.combosTruncated ? '以上' : ''}
-          </button>
-          {expanded && (
-            <ol className="combo-list">
-              {match.combos.map((c, idx) => (
-                <li key={idx}>
-                  <button
-                    className={idx === comboIndex ? 'combo-row selected' : 'combo-row'}
-                    onClick={() => setComboIndex(idx)}
-                  >
-                    <ComboInline group={group} combo={c} />
-                    {c.fuzzyCount > 0 && (
-                      <span className="fuzzy-note">読み替え{c.fuzzyCount}文字</span>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ol>
-          )}
-        </div>
-      )}
+      <ComboSwitcher
+        group={group}
+        combos={match.combos}
+        truncated={match.combosTruncated}
+        selectedIndex={comboIndex}
+        onSelect={setComboIndex}
+      />
     </div>
   )
 }
@@ -113,13 +95,7 @@ export const GroupDetail = memo(function GroupDetail({ group, words, options }: 
         )}
       </h2>
 
-      <div className="element-strip">
-        {group.elements.map((el, j) => (
-          <span key={j} className="elem">
-            <HighlightedElement text={el} positions={stripPicked?.get(j)} />
-          </span>
-        ))}
-      </div>
+      <ElementStrip group={group} picked={stripPicked} />
 
       {words === null && <p className="loading">計算中…</p>}
       {words !== null && words.length === 0 && (
