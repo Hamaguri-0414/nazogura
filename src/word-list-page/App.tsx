@@ -6,6 +6,7 @@ import {
   type ComposeOptions,
 } from '../shared/wordCompose'
 import { SiteHeader } from '../components/SiteHeader'
+import { ComposeOptionsFields } from '../components/ComposeOptionsFields'
 import { GroupDetail } from './GroupDetail'
 
 interface WordDict {
@@ -184,26 +185,7 @@ export function App() {
             ))}
           </div>
           <div className="search-options">
-            <label>
-              <input
-                type="checkbox"
-                checked={options.ignoreVariants}
-                onChange={(e) =>
-                  setOptions({ ...options, ignoreVariants: e.target.checked })
-                }
-              />
-              濁音・半濁音・小さい文字は区別しない
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={options.allowMultiPick}
-                onChange={(e) =>
-                  setOptions({ ...options, allowMultiPick: e.target.checked })
-                }
-              />
-              同じ要素から2文字以上拾うことを許可する
-            </label>
+            <ComposeOptionsFields options={options} onChange={setOptions} />
           </div>
         </div>
 
