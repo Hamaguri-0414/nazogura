@@ -63,13 +63,6 @@
   letter-spacing: 0.05em;
 }
 
-.element-strip .picked {
-  background: var(--color-highlight);
-  border-radius: 3px;
-  font-weight: 700;
-  padding: 0 0.05em;
-}
-
 .pick-list {
   list-style: none;
   margin: 0;
@@ -80,13 +73,6 @@
 
 .pick-list li {
   padding: 0.1rem 0;
-}
-
-.pick-list .picked {
-  background: var(--color-highlight);
-  border-radius: 3px;
-  font-weight: 700;
-  padding: 0 0.05em;
 }
 
 .pick-list .missed {
@@ -144,13 +130,6 @@
   font-size: 0.85rem;
 }
 
-.combo-inline .picked {
-  background: var(--color-highlight);
-  border-radius: 3px;
-  font-weight: 700;
-  padding: 0 0.05em;
-}
-
 .fuzzy-note {
   margin-left: auto;
   font-size: 0.75rem;
@@ -159,11 +138,4 @@
   border-radius: 999px;
   padding: 0.02rem 0.5rem;
   white-space: nowrap;
-}
-
-.loading,
-.no-result {
-  text-align: center;
-  color: var(--color-muted);
-  padding: 2rem 0;
 }

@@ -71,7 +71,7 @@
 }
 
 .group-row.selected {
-  background: #eef0fb;
+  background: var(--color-primary-tint);
   border-color: var(--color-primary);
 }
 
