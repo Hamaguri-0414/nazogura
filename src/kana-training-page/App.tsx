@@ -30,10 +30,13 @@ function pickWord(pool: string[], recent: string[]): string {
   return pool[Math.floor(Math.random() * pool.length)]
 }
 
-/** 五十音表。出題単語の文字のマスに丸数字を重ねて表示する */
+/**
+ * 仮名を伏せた五十音表。出題単語の文字のマスに丸数字だけを表示し、
+ * マスの位置からどの仮名かを思い出してもらう。
+ */
 function KanaGrid({ marks }: { marks: Map<string, number[]> }) {
   return (
-    <div className="kana-grid" role="img" aria-label="五十音表">
+    <div className="kana-grid" role="img" aria-label="仮名を伏せた五十音表">
       {GOJUON_COLUMNS.map((col, ci) => (
         <div className="kana-col" key={ci}>
           {col.map((kana, ri) =>
@@ -41,7 +44,6 @@ function KanaGrid({ marks }: { marks: Map<string, number[]> }) {
               <div className="kana-cell empty" key={ri} />
             ) : (
               <div className="kana-cell" key={ri}>
-                <span className="kana-char">{kana}</span>
                 {marks.has(kana) && (
                   <span className="kana-marks">
                     {marks.get(kana)!.map((n) => (
@@ -135,8 +137,8 @@ export function App() {
       <main className="kt-main">
         <h1>五十音文字拾いトレーニング</h1>
         <p className="lead">
-          五十音表に置かれた丸数字を①から順に拾うと、ひとつの単語になります。
-          導いた単語を入力してください。
+          仮名の伏せられた五十音表に丸数字が置かれています。
+          マスの位置から仮名を思い出し、①から順に拾ってできる単語を入力してください。
         </p>
 
         {loadError !== null && <p className="field-error">{loadError}</p>}
