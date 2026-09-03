@@ -1,4 +1,17 @@
 /**
+ * 各文字について、その文字を含む要素indexの一覧（マッチング候補）を作る。
+ * chars と elementsChars は同じオプションで正規化済みであること。
+ */
+export function buildCandidates(
+  chars: string[],
+  elementsChars: string[][],
+): number[][] {
+  return chars.map((ch) =>
+    elementsChars.flatMap((elChars, j) => (elChars.includes(ch) ? [j] : [])),
+  )
+}
+
+/**
  * 増加路探索による二部グラフの最大マッチングのサイズ。
  * candidates[i] = 左側i番目の頂点（答えの文字）が接続できる右側頂点（要素）の一覧。
  */

@@ -54,3 +54,8 @@ export function normalizeForSearch(input: string, ignoreVariants: boolean): stri
   const base = toBase(input)
   return ignoreVariants ? toFuzzy(base) : base
 }
+
+/** 元の文字位置との対応を保つため、1文字ずつ検索用に正規化して配列にする */
+export function normalizeChars(text: string, ignoreVariants: boolean): string[] {
+  return [...text].map((ch) => normalizeForSearch(ch, ignoreVariants))
+}
