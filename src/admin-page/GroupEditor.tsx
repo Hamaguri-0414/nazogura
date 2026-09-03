@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import type { Dictionary, Group } from '../shared/types'
 import { toBase } from '../shared/normalize'
 import { validateElementName } from '../shared/validate'
-import { createGroup, deleteGroup, updateGroup } from './api'
+import { createGroup, deleteGroup, toErrorMessage, updateGroup } from './api'
 
 interface Props {
   dict: Dictionary
@@ -96,7 +96,7 @@ export function GroupEditor({ dict, group, onDone }: Props) {
       }
       onDone()
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : String(err))
+      setSaveError(toErrorMessage(err))
       setSaving(false)
     }
   }
@@ -108,7 +108,7 @@ export function GroupEditor({ dict, group, onDone }: Props) {
       await deleteGroup(group.id)
       onDone()
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : String(err))
+      setSaveError(toErrorMessage(err))
     }
   }
 
