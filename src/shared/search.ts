@@ -125,10 +125,18 @@ export function searchThemes(
     )
     const strictElements = group.elements.map((el) => [...toBase(el)])
 
-    // 答えの各文字について、その文字を含む要素の一覧を作る
-    const candidates: number[][] = searchAnswer.map((ch) =>
-      searchElements.flatMap((chars, j) => (chars.includes(ch) ? [j] : [])),
-    )
+    // 答えの各文字について、その文字を含む要素の一覧を作る。
+    // 読み替えなしで一致する要素を先頭に並べ、列挙が COMBO_LIMIT で
+    // 打ち切られた場合でも読み替えの少ない組み合わせが結果に残るようにする
+    const candidates: number[][] = searchAnswer.map((ch, i) => {
+      const isExact = (j: number) =>
+        strictElements[j].some(
+          (c, k) => c === strictAnswer[i] && searchElements[j][k] === ch,
+        )
+      return searchElements
+        .flatMap((chars, j) => (chars.includes(ch) ? [j] : []))
+        .sort((a, b) => Number(isExact(b)) - Number(isExact(a)))
+    })
 
     const matchable = options.allowMultiPick
       ? candidates.filter((cand) => cand.length > 0).length
