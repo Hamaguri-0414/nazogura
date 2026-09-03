@@ -29,6 +29,18 @@ function TopPage() {
             五十音表に置かれた丸数字を順に拾って単語を導く練習を、エンドレスで繰り返せます。
           </p>
         </a>
+        <a className="card tool-card" href={`${base}tools/kana-shift-training/`}>
+          <h3>五十音シフトトレーニング</h3>
+          <p className="muted">
+            「あ→い」のように五十音表で文字をずらす変換を、頭の中の五十音表だけで速く戻す練習です。
+          </p>
+        </a>
+        <a className="card tool-card" href={`${base}tools/anagram-training/`}>
+          <h3>アナグラムトレーニング</h3>
+          <p className="muted">
+            バラバラに並んだ文字を並べ替えて単語に戻す練習です。拾った文字から答えを組み立てる力を鍛えます。
+          </p>
+        </a>
       </main>
     </>
   )
