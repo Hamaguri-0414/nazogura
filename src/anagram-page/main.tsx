@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import '../styles/site.css'
 import '../styles/training.css'
-import '../styles/kana-training.css'
+import '../styles/anagram.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

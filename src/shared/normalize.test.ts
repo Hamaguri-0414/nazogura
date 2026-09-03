@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeForSearch, toBase, toFuzzy } from './normalize'
+import { normalizeForSearch, toBase, toFuzzy, toLargeKana } from './normalize'
 
 describe('toBase', () => {
   it('カタカナをひらがなに変換する', () => {
@@ -13,6 +13,13 @@ describe('toBase', () => {
 
   it('長音「ー」はそのまま残す', () => {
     expect(toBase('コーヒー')).toBe('こーひー')
+  })
+})
+
+describe('toLargeKana', () => {
+  it('小書き文字だけを並字にし、濁点は残す', () => {
+    expect(toLargeKana('せんちゃ')).toBe('せんちや')
+    expect(toLargeKana('がっこう')).toBe('がつこう')
   })
 })
 

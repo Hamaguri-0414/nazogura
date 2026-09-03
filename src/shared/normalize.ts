@@ -33,6 +33,18 @@ export function toBase(input: string): string {
 }
 
 /**
+ * 小書き文字を並字に揃える。単語辞書は拗音・促音を並字で収録している
+ * （例: 煎茶 → せんちや）ため、辞書の単語と突き合わせる入力に使う。
+ */
+export function toLargeKana(input: string): string {
+  let out = ''
+  for (const ch of input) {
+    out += SMALL_TO_LARGE[ch] ?? ch
+  }
+  return out
+}
+
+/**
  * 「表記ゆれを区別しない」オプション用の正規化。
  * 濁点・半濁点を除去し、小書き文字を並字に揃える。
  * toBase 済みの文字列を渡すこと。

@@ -28,6 +28,14 @@ export default defineConfig(({ command, isPreview }) => ({
           import.meta.dirname,
           'tools/kana-pickup-training/index.html',
         ),
+        kanaShiftTraining: resolve(
+          import.meta.dirname,
+          'tools/kana-shift-training/index.html',
+        ),
+        anagramTraining: resolve(
+          import.meta.dirname,
+          'tools/anagram-training/index.html',
+        ),
       },
     },
   },
