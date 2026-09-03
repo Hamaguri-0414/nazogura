@@ -121,7 +121,7 @@
 }
 
 .word-chip.selected {
-  background: #eef0fb;
+  background: var(--color-primary-tint);
   border-color: var(--color-primary);
   font-weight: 600;
 }
