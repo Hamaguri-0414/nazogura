@@ -30,3 +30,4 @@ npm run build   # 公開サイトの静的ビルド（dist/ に管理画面は�
 
 - コード: [MIT License](LICENSE)
 - 単語リスト（`public/data/words/` の豚辞書・一般辞書・コア辞書）: 「豚辞書」第14版（buta014.dic、著作権者: ぶたさん / QWC51184）から抽出・変換したデータです。豚辞書の配布条件（出典明記のうえで抽出・引用・改変・変換は自由）に従って利用しています。
+- 英単語リスト（`public/data/words/english.txt`）: 『CEFR-J Wordlist Version 1.6』東京外国語大学投野由紀夫研究室（URL: http://www.cefr-j.org/download.html より2026年9月ダウンロード）のA1・A2レベルから抽出・変換したデータです（[変換仕様](docs/requirements/english-word-dictionary.md)、更新は `node scripts/convert-cefrj.mjs`）。

@@ -3,7 +3,7 @@
 - サイト全体: 謎解きツール集「謎蔵（Nazogura）」
 - 本書の対象: 能力向上ツールの英語版に向けた単語辞書の整備（ツール本体は別要件）
 - 作成日: 2026-09-04
-- 状態: **計画のみ・実装未着手**（利用制限による中断のため、再開用に経緯を残す）
+- 状態: **辞書の変換まで実装済み**（`public/data/words/english.txt`、2,117語）。英語版ツール本体は未着手
 
 ## 1. 背景・目的
 
@@ -42,21 +42,29 @@
 | 英検級別・SVL12000・JACET8000 | 再配布不可 |
 | 教科書（NEW HORIZON等）の語彙 | 著作権上、再配布不可 |
 
-## 3. 変換方針
+## 3. 変換仕様（実装済み: `scripts/convert-cefrj.mjs`）
 
 豚辞書（`scripts/convert-words.mjs`）と同じ流儀で、変換済みリストのみを同梱する。
 
-1. CEFR-J zip をダウンロードし、Excel から A1+A2 の見出し語と品詞を抽出
-2. フィルタ: 品詞で機能語を除外（名詞・動詞・形容詞・副詞を残す）
-   → 3文字以上 → 小文字化 → スペース・ハイフン入りの複合語は除外 → 重複除去
-3. `scripts/convert-cefrj.mjs`（新設）で `public/data/words/english.txt`（1行1単語）を生成
-4. README・LICENSE にクレジット表記を追記（豚辞書の記載と同じ体裁）
+1. CEFR-J zip をダウンロード（引数でローカルzipも指定可）し、Excel から A1+A2 の見出し語と品詞を抽出
+   - xlsx のパースは依存パッケージなし（`unzip` コマンド＋XMLの直接パース）
+2. フィルタ（A1+A2 全2,577項目 → **2,117語**）:
+   - 品詞: **noun / verb / adjective / adverb / number を残す**。number（one, eight 等の数詞）は
+     機能語ではないため残す判断とした。除外は determiner(41)・preposition(49)・pronoun(71)・
+     be-verb(11)・conjunction(18)・modal auxiliary(11)・do-verb(5)・interjection(6)・
+     have-verb(4)・infinitive-to(1)
+   - ストップワード: adverb 扱いで残る文法語（not・疑問詞 how/when/where/why・指示語 there/here/then・
+     応答語 yes/yeah/okay/please・談話標識 however/therefore 等21語）を明示リストで除外
+   - 表記: `a.m./A.M./am/AM` のような `/` 区切りの表記ゆれは分解して個別に判定
+   - `^[a-z]{3,}$` のみ許可（**3文字以上**・小文字化。複合語・略語・アポストロフィ入りは除外）→ 重複除去 → ABC順
+3. 出力: `public/data/words/english.txt`（1行1単語）
+4. README・LICENSE にクレジット表記を追記済み（豚辞書の記載と同じ体裁）
 5. **生のExcelはリポジトリに同梱しない**（配布はあくまで変換済みリスト＋出典明記）
+6. `public/data/words/index.json` には**登録しない**（五十音系ツールの辞書選択に英語辞書が
+   混ざらないよう、英語ツール実装時に専用パスで読み込む）
 
 ## 4. 未決事項
 
-- A1のみ / A1+A2 のどちらにするか（まずA1+A2で作り、様子を見て絞るのが有力）
-- `public/data/words/index.json` に登録するか（五十音系ツールの辞書選択に英語辞書が混ざらないよう、
-  当面は index.json に載せず英語ツール専用に読み込む選択肢もある）
-- xlsx のパース方法（devDependency を1つ追加するか、CSV に書き出して依存ゼロで済ませるか）
 - 英語版ツール第1弾をどれにするか（A=1式変換が「無説明で使ってよい前提知識」と直結しており有力）
+- 難易度調整で A1 のみに絞るオプションを設けるか（現状は A1+A2 一本）
+- ストップワード21語の過不足（実際に出題して違和感があれば調整）
