@@ -2,31 +2,6 @@
   max-width: 1080px;
 }
 
-.dict-tabs {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.75rem;
-}
-
-.dict-tab {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.dict-tab.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #fff;
-  font-weight: 600;
-}
-
-.dict-count {
-  font-size: 0.78rem;
-  opacity: 0.75;
-}
-
 .wl-layout {
   display: grid;
   grid-template-columns: 260px 1fr;

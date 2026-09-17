@@ -1,0 +1,118 @@
+.al-main {
+  max-width: 1080px;
+}
+
+.al-length-tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.al-length-tab {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.al-length-tab.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.al-options {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.al-option {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.al-query {
+  min-width: 12rem;
+}
+
+.al-status {
+  margin: 0 0 0.75rem;
+}
+
+.al-section {
+  padding: 0.9rem 1.25rem 1.1rem;
+}
+
+.al-section-heading {
+  font-size: 1.05rem;
+  margin: 0 0 0.6rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.al-group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.al-group {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  padding: 0.25rem 0.55rem;
+}
+
+.al-group-button {
+  cursor: pointer;
+}
+
+.al-group-button:hover {
+  border-color: var(--color-primary);
+}
+
+.al-word {
+  font-weight: 600;
+}
+
+/* 単語間の区切り（⇄）を疑似要素で入れる */
+.al-word + .al-word::before {
+  content: '⇄';
+  color: var(--color-muted);
+  font-weight: 400;
+  margin: 0 0.35rem;
+}
+
+.al-word-hidden {
+  color: var(--color-muted);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+.al-badge {
+  margin-left: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-primary-tint);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .al-query {
+    min-width: 100%;
+  }
+}
