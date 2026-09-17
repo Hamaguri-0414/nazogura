@@ -161,6 +161,32 @@ input.invalid {
   padding: 0 0.05em;
 }
 
+/* 辞書切替タブ（テーマ別単語リスト・文字ずらし対応表で共通） */
+.dict-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.dict-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dict-tab.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.dict-count {
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
 .loading,
 .no-result {
   text-align: center;

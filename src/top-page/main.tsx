@@ -41,6 +41,18 @@ function TopPage() {
             バラバラに並んだ文字を並べ替えて単語に戻す練習です。拾った文字から答えを組み立てる力を鍛えます。
           </p>
         </a>
+        <a className="card tool-card" href={`${base}tools/anagram-list/`}>
+          <h3>アナグラム全暗記</h3>
+          <p className="muted">
+            並べ替えると別の単語になる組を辞書から全通り洗い出した一覧です。日本語・英語の両方に対応しています。
+          </p>
+        </a>
+        <a className="card tool-card" href={`${base}tools/shift-pair-table/`}>
+          <h3>文字ずらし対応表</h3>
+          <p className="muted">
+            五十音順・アルファベット順で+nずらすと別の単語になる組を辞書から全通り洗い出した、暗記用の対応表です。
+          </p>
+        </a>
       </main>
     </>
   )

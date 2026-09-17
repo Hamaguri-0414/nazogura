@@ -36,6 +36,14 @@ export default defineConfig(({ command, isPreview }) => ({
           import.meta.dirname,
           'tools/anagram-training/index.html',
         ),
+        anagramList: resolve(
+          import.meta.dirname,
+          'tools/anagram-list/index.html',
+        ),
+        shiftPairTable: resolve(
+          import.meta.dirname,
+          'tools/shift-pair-table/index.html',
+        ),
       },
     },
   },
