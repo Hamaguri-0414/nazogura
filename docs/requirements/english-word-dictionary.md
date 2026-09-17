@@ -63,7 +63,20 @@
 6. `public/data/words/index.json` には**登録しない**（五十音系ツールの辞書選択に英語辞書が
    混ざらないよう、英語ツール実装時に専用パスで読み込む）
 
-## 4. 未決事項
+## 4. 統合辞書 english-all.txt（2026-09-17 追加）
+
+『英単語ターゲット1200』由来の単語リスト（`public/data/words/target1200.csv`、1,400語。
+熟語300を除外済み）と english.txt を重複なく統合した **`english-all.txt`（2,436語）** を追加した。
+
+- 生成: `node scripts/merge-english.mjs`（english.txt + target1200.csv → english-all.txt）
+- 収録方針は english.txt と同じに揃える: 英小文字3文字以上のみ・機能語を含まない
+  - ターゲット1200側は品詞情報がないため、前置詞・接続詞・代名詞・限定詞・談話標識を
+    明示リスト（スクリプト内 `FUNCTION_WORDS`）で除外
+  - 出典側の誤植等を修正: `e-mail`→email / `businesss`→business / `devide`→divide
+- target1200.csv からの純増は319語（重複1,027語は1語に統合）
+- `index.json` には english.txt と同様に登録しない
+
+## 5. 未決事項
 
 - 英語版ツール第1弾をどれにするか（A=1式変換が「無説明で使ってよい前提知識」と直結しており有力）
 - 難易度調整で A1 のみに絞るオプションを設けるか（現状は A1+A2 一本）
